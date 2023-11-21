@@ -1,1 +1,18 @@
-/target
+# Maven
+target/
+*.versionsBackup
+
+# Eclipse
+.classpath
+.project
+.settings
+
+# IntelliJ IDEA
+*.iml
+.idea/
+
+# Visual Studio Code
+.vscode
+
+# MacOS X Finder
+.DS_Store
