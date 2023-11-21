@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-   Copyright 2014 Mat Booth <mbooth@apache.org>
+<!--
+  Copyright 2014 Mat Booth <mbooth@apache.org>
+  Copyright 2023 Alexander Kriegisch <Alexander@Kriegisch.name>
 
-   Sun Public License Notice
+  Sun Public License Notice
 
-   The contents of this file are subject to the Sun Public License 
-   Version 1.0 (the "License"); you may not use this file except in 
-   compliance with the License. A copy of the License is available at 
-   http://opensource.org/licenses/SPL-1.0
+  The contents of this file are subject to the Sun Public License
+  Version 1.0 (the "License"); you may not use this file except in
+  compliance with the License. A copy of the License is available at
+  http://opensource.org/licenses/SPL-1.0
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.matbooth</groupId>
-  <artifactId>sunlabs.brazil</artifactId>
-  <version>2.3.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
-    <version>7</version>
+    <version>9</version>
   </parent>
+
+  <groupId>dev.aspectj</groupId>
+  <artifactId>sunlabs.brazil</artifactId>
+  <version>2.3.1-SNAPSHOT</version>
 
   <name>Brazil Framework</name>
   <description>Extremely small footprint Java HTTP stack.</description>
-  <url>https://github.com/mbooth101/brazil</url>
+  <url>https://github.com/dev-aspectj/brazil</url>
   <inceptionYear>1999</inceptionYear>
 
   <developers>
@@ -32,22 +34,33 @@
       <name>Mat Booth</name>
       <email>mbooth@apache.org</email>
     </developer>
+    <developer>
+      <name>Alexander Kriegisch</name>
+      <email>Alexander@Kriegisch.name</email>
+    </developer>
   </developers>
 
   <issueManagement>
-    <url>https://github.com/mbooth101/brazil/issues</url>
+    <url>https://github.com/dev-aspectj/brazil/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
 
   <scm>
-    <url>https://github.com/mbooth101/brazil</url>
-    <connection>
-      scm:git:git@github.com:mbooth101/brazil.git
-    </connection>
-    <developerConnection>
-      scm:git:git@github.com:mbooth101/brazil.git
-    </developerConnection>
+    <url>https://github.com/dev-aspectj/brazil</url>
+    <connection>scm:git:git@github.com:dev-aspectj/brazil.git</connection>
+    <developerConnection>scm:git:git@github.com:dev-aspectj/brazil.git</developerConnection>
   </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
 
   <licenses>
     <license>
@@ -68,7 +81,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
+        <version>3.11.0</version>
         <configuration>
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
@@ -93,13 +106,13 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.4.0</version>
+        <version>5.1.9</version>
         <configuration>
-           <manifestLocation>${project.build.directory}/osgi</manifestLocation>
-           <instructions>
-             <_nouses>true</_nouses>
-             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-           </instructions>
+          <manifestLocation>${project.build.directory}/osgi</manifestLocation>
+          <instructions>
+            <_nouses>true</_nouses>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+          </instructions>
         </configuration>
         <executions>
           <execution>
@@ -114,12 +127,87 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
         <configuration>
           <archive>
             <manifestFile>${project.build.directory}/osgi/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>3.1.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>sonatype-oss-release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <failOnError>false</failOnError>
+                  <failOnWarnings>false</failOnWarnings>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
