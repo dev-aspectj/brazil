@@ -22,7 +22,7 @@
 
   <groupId>dev.aspectj</groupId>
   <artifactId>sunlabs.brazil</artifactId>
-  <version>2.3.1-SNAPSHOT</version>
+  <version>2.3.1</version>
 
   <name>Brazil Framework</name>
   <description>Extremely small footprint Java HTTP stack.</description>
